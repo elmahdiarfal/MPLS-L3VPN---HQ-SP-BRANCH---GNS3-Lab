@@ -7,7 +7,7 @@ This repository contains a hands-on GNS3 lab implementing an MPLS Layer-3 VPN (L
 This repository contains a hands-on GNS3 lab implementing an MPLS Layer-3 VPN (L3VPN) using Cisco IOSv (vios-adventerprisek9).
 It demonstrates the core Service Provider (SP) building blocks: OSPF IGP, LDP, MPLS forwarding, VRFs on PE devices, and MP-BGP (vpnv4) to exchange customer routes. Customer edge (CE) routers run OSPF with their attached PE.
 
-The lab topology image: `Topology.png`
+The lab topology image: ![Topology](./Topology.png)
 
 ---
 
