@@ -107,64 +107,82 @@ This lab shows how to configure an MPLS L3VPN with:
 
 ### SP — Common OSPF (Backbone)
 ```bash
-SP1-PE# router ospf 1
-         network 172.16.0.0 0.0.255.255 area 0
+SP1-PE# configure terminal         # Enter global config mode
+SP1-PE(config)# router ospf 1      # Enter router ospf config mode
+SP1-PE(config-router)# network 172.16.0.0 0.0.255.255 area 0
+SP1-PE(config-router)# exit
+SP1-PE(config)# exit
 ```
-
 
 ### MPLS / LDP (Enable per SP router)
 ```bash
-SP1-PE# mpls ldp router-id Loopback0 force
-```
-```bash
-SP1-PE# interface GigabitEthernet0/0
-         mpls ip
+SP1-PE# configure terminal          # Enter global config mode
+SP1-PE(config)# mpls ldp router-id Loopback0 force
+SP1-PE(config)# interface GigabitEthernet0/0    # Enter interface config mode
+SP1-PE(config-if)# mpls ip
+SP1-PE(config-if)# exit
+SP1-PE(config)# exit
 ```
 
 ### VRF on PE (SP1-PE and SP3-PE)
 ```bash
-SP1-PE# ip vrf CUSTOMER-1
-         rd 100:1
-         route-target export 1:100
-         route-target import 1:100
+SP1-PE# configure terminal           # Enter global config mode
+SP1-PE(config)# ip vrf CUSTOMER-1       # VRF config mode
+SP1-PE(config-vrf)# rd 100:1
+SP1-PE(config-vrf)# route-target export 1:100
+SP1-PE(config-vrf)# route-target import 1:100
+SP1-PE(config-vrf)# exit
 ```
 ```bash
-SP1-PE# interface GigabitEthernet0/1
-         ip vrf forwarding CUSTOMER-1
-         ip address 10.0.100.1 255.255.255.252
-         no shutdown
+SP1-PE(config)# interface GigabitEthernet0/1     # Interface config mode
+SP1-PE(config-if)# ip vrf forwarding CUSTOMER-1
+SP1-PE(config-if)# ip address 10.0.100.1 255.255.255.252
+SP1-PE(config-if)# no shutdown
+SP1-PE(config-if)# exit
+SP1-PE(config)# exit
 ```
 
 ### MP-BGP (iBGP between PEs using Loopbacks)
 ```bash
-SP1-PE# router bgp 100
-         neighbor 172.16.2.1 remote-as 100
-         neighbor 172.16.2.1 update-source Loopback0
-
-         address-family vpnv4
-          neighbor 172.16.2.1 activate
-          neighbor 172.16.2.1 send-community both
-         exit-address-family
+SP1-PE# configure terminal           # Enter global config mode
+SP1-PE(config)# router bgp 100       # BGP router config mode
+SP1-PE(config-router)# neighbor 172.16.2.1 remote-as 100
+SP1-PE(config-router)# neighbor 172.16.2.1 update-source Loopback0
+```
+```bash
+SP1-PE(config-router)# address-family vpnv4
+SP1-PE(config-router-af)# neighbor 172.16.2.1 activate
+SP1-PE(config-router-af)# neighbor 172.16.2.1 send-community both
+SP1-PE(config-router-af)# exit-address-family
+SP1-PE(config-router)# exit
+SP1-PE(config)# exit
 ```
 
 ### VRF <-> IGP/BGP Redistribution (PE)
 ```bash
-SP1-PE# router ospf 10 vrf CUSTOMER-1
-         network 10.0.0.0 0.0.255.255 area 0
-         redistribute bgp 100 subnets
+SP1-PE# configure terminal                # Enter global config mode
+SP1-PE(config)# router ospf 10 vrf CUSTOMER-1     # VRF specific OSPF config mode
+SP1-PE(config-router)# network 10.0.0.0 0.0.255.255 area 0
+SP1-PE(config-router)# redistribute bgp 100 subnets
+SP1-PE(config-router)# exit
 ```
 ```bash
-SP1-PE# router bgp 100
-         address-family ipv4 vrf CUSTOMER-1
-          redistribute ospf 10 vrf CUSTOMER-1
-         exit-address-family
+SP1-PE(config)# router bgp 100                 # BGP router config mode
+SP1-PE(config-router)# address-family ipv4 vrf CUSTOMER-1
+SP1-PE(config-router-af)# redistribute ospf 10 vrf CUSTOMER-1
+SP1-PE(config-router-af)# exit-address-family
+SP1-PE(config-router)# exit
+SP1-PE(config)# exit
 ```
 
 ### CE OSPF (HQ-CE / BRANCH-CE)
 ```bash
-HQ-CE# router ospf 1
-        log-adjacency-changes
-        network 10.0.0.0 0.0.255.255 area 0
+HQ-CE# configure terminal           # Enter global config mode
+HQ-CE(config)# router ospf 1         # OSPF router config mode
+HQ-CE(config-router)# log-adjacency-changes
+HQ-CE(config-router)# network 10.0.0.0 0.0.255.255 area 0
+HQ-CE(config-router)# exit
+HQ-CE(config)# exit
 ```
 
 ---
