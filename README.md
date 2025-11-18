@@ -42,7 +42,7 @@ This lab shows how to configure an MPLS L3VPN with:
 
 ## 🌐 Topology overview
 
-![Topology](./Topology.png)
+![Topology](Topology.png)
 
 - **SP Network**:  
   - `SP1-PE` — `SP2-P` — `SP3-PE` (linear)  
